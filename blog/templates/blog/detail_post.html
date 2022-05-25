@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Details{% endblock title %}
+
+{% block content %}
+<style type="text/css">
+	.card {
+		max-width: 700px;
+	}
+
+	.container {
+		padding: 20px;
+	}
+</style>
+
+<div class="container">
+	<div class="row">
+
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<div class="card-header">
+				<div class="row">
+					<div class="col"><a href="{% url 'account' user_id=blog_post.author.id %}">{{blog_post.author.username}}</a></div>
+					<div class="col">
+						{% if not request.user in blog_post.likes.all %}
+						<form action="{% url 'like-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-outline-success btn-sm mr-2">Like</button>
+						</form>
+						{% else %}
+						<form action="{% url 'remove-like-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-success btn-sm">Liked</button>
+						</form>
+						{% endif %}
+					</div>
+					<div class="col">
+						{% if not request.user in blog_post.unlikes.all %}
+						<form action="{% url 'unlike-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-outline-danger btn-sm mr-2">Unlike</button>
+						</form>
+						{% else %}
+						<form action="{% url 'remove-unlike-post' blog_post.slug %}" method="POST">
+							{% csrf_token %}
+							<button type="submit" name="post_id" value="{{blog_post.id}}"
+								class="btn btn-danger btn-sm">Unliked</button>
+						</form>
+						{% endif %}
+					</div>
+					<div class="col">
+						<a href="{% url 'report-post' blog_post.author.id blog_post.slug %}"><button class='btn btn-danger'>REPORT</button></a>
+					</div>
+				</div>
+			</div>
+			{% if blog_post.header_image %}
+						<img class="card-img-top" src="{{blog_post.header_image.url}}" alt="header_image">
+					{% else %}
+					{% endif %}
+			<div class="card-body mt-2 mb-2">
+				<h2 class="card-title">{{blog_post.title}}</h2>
+				<p class="card-text">
+					
+					{% if blog_post.video %}
+						<video width="360" height="320" controls="controls">
+							<source src="{{blog_post.video.url}}" type="video/mp4" />
+							Your browser does not support the video tag.
+						</video>
+					{% endif %}
+					<br>
+					
+					<br>
+					{{blog_post.body|safe}}		
+				</p>
+				{% if blog_post.author == request.user %}
+				<a href="{% url 'edit-post' blog_post.slug %}"><button type="button" class="btn btn-outline-dark">Edit
+						Post</button></a>
+				<a href="{% url 'delete-post' blog_post.slug %}"><button type="button" class="btn btn-outline-danger">Delete Post</button></a>
+				{% else %}
+				<a href="{% url 'edit-request' blog_post.id %}"><button type="button" class="btn btn-outline-warning">Edit Request</button></a>
+				{% endif %}
+			</div>
+			<div class="card-footer text-muted">
+				<div class="row d-flex justify-content-between">
+					<div class="col">
+						Likes: {{likes_count}} | Unlikes: {{unlikes_count}}
+					</div>
+					<div class="col">Views: {{blog_post.views}}</div>
+					<div class="col">Number of Edits: {{blog_post.number_of_edits}}</div>
+				</div>
+				<hr>
+				Last Edit on {{blog_post.date_updated}} by {{blog_post.author.username}}
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!--Comment Division-->
+<div class="container-fluid">
+	<div class="container-fluid">
+		<h2 class='text-center'>Comments</h2>
+		{% if blog_post.comments.all %}
+			{% for comment in blog_post.comments.all %}
+				<div class="container">
+					<div class="card m-auto">
+						<div class="card-header">
+							<div class="row">
+								<div class="row">
+									<div class="col"><a href="{% url 'account' user_id=comment.author.id %}">{{comment.author.username}}</a></div>
+									<div class="col">
+										{% if not request.user in comment.likes.all %}
+										<form action="{% url 'like-comment' blog_post.slug comment.id %}" method="POST">
+											{% csrf_token %}
+											<button type="submit" name="post_id" value="{{blog_post.id}}"
+												class="btn btn-outline-success btn-sm mr-2">Like</button>
+										</form>
+										{% else %}
+										<form action="{% url 'remove-like-comment' blog_post.slug comment.id %}" method="POST">
+											{% csrf_token %}
+											<button type="submit" name="post_id" value="{{blog_post.id}}"
+												class="btn btn-success btn-sm">Liked</button>
+										</form>
+										{% endif %}
+									</div>
+									<div class="col">
+										{% if not request.user in comment.unlikes.all %}
+										<form action="{% url 'unlike-comment' blog_post.slug comment.id %}" method="POST">
+											{% csrf_token %}
+											<button type="submit" name="post_id" value="{{blog_post.id}}"
+												class="btn btn-outline-danger btn-sm mr-2">Unlike</button>
+										</form>
+										{% else %}
+										<form action="{% url 'remove-unlike-comment' blog_post.slug comment.id %}" method="POST">
+											{% csrf_token %}
+											<button type="submit" name="post_id" value="{{blog_post.id}}"
+												class="btn btn-danger btn-sm">Unliked</button>
+										</form>
+										{% endif %}
+									</div>
+									<div class="col">
+										<a href="{% url 'report-comment' comment.author.id comment.id %}"><button class="btn btn-danger">REPORT</button></a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							{{comment.body}}
+						</div>
+						<div class="card-footer">
+							<div class="row">
+								<div class="col">Likes: {{comment.total_likes}} | Unlikes: {{comment.total_unlikes}}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		{% else %}
+			<div class="container text-center">No Comments Yet. <a href="{% url 'create-comment' blog_post.slug %}"> Add One.</a></div>
+		{% endif %}
+	</div>
+</div>
+
+<div class="container text-center">
+	<div class="text-center">
+		{% if blog_post.comments.all %}
+			<a href="{% url 'create-comment' blog_post.slug %}">Leave a Comment..</a>	
+		{% endif %}
+	</div>
+</div>
+
+{% endblock content %}

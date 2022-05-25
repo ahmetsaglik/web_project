@@ -1,0 +1,53 @@
+{% load static %}
+{% load custom_tags %}
+
+<header class="bg-dark text-white">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-lg-start p-0">
+            <div class="container d-flex align-items-center">
+                <a href="{% url 'home' %}"
+                    class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none mx-5">
+                    <h2 class='text-center'>LOGO</h2>
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="{% url 'all-categories' %}" class="nav-link px-2 text-primary">
+                            <button type="button" class="btn btn-outline-secondary">All Categories</button>
+                        </a></li>
+                </ul>
+
+            </div>
+
+            <div class="container">
+
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" method="get">
+                    <input type="text" class="form-control" name="q" id="id_q" placeholder="Search...">
+                </form>
+
+            </div>
+
+            <div class="container">
+                {% if request.user.is_authenticated %}
+                <div class="text-end">
+                    <a href="{% url 'create-post' %}"><button type="button" class="btn btn-outline-light me-2">Upload Content</button></a>
+                    <a href="{% url 'account' request.user.id %}"><button type="button" class="btn btn-success">My
+                            Account</button></a>
+                    <a href="{% url 'logout' %}"><button type="button" class="btn btn-danger">Logout</button></a>
+                    {% show_notifications %}
+                </div>
+                {% else %}
+                <div class="text-end">
+                    <a href="{% url 'login' %}"><button type="button"
+                            class="btn btn-outline-light me-2">Login</button></a>
+                    <a href="{% url 'register' %}"><button type="button" class="btn btn-warning">Sign-up</button></a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<script type="text/javascript">
+    document.getElementById("id_q").value = "{{query}}"
+</script>

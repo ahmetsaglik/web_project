@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Editted Post{% endblock title %}
+
+{% block content %}
+<style type="text/css">
+	.card {
+		max-width: 700px;
+	}
+
+	.container {
+		padding: 20px;
+	}
+</style>
+
+<div class="container">
+	<div class="row">
+
+		<!-- Blog Post -->
+		<div class="card m-auto">
+			<div class="card-header">
+				<div class="row">
+					<div class="col"><a href="{% url 'account' user_id=editted_post.author.id %}">{{editted_post.editor.username}}</a></div>
+				</div>
+			</div>
+			{% if editted_post.header_image %}
+				<img class="card-img-top" src="{{editted_post.header_image.url}}" alt="header_image">
+			{% endif %}
+			<div class="card-body mt-2 mb-2">
+				<h2 class="card-title">{{editted_post.title}}</h2>
+				<p class="card-text">
+					
+					{% if editted_post.video %}
+						<video width="360" height="320" controls="controls">
+							<source src="{{editted_post.video.url}}" type="video/mp4" />
+							Your browser does not support the video tag.
+						</video>
+					{% endif %}
+					<br>
+					<hr>
+					{{editted_post.body|safe}}		
+				</p>
+			</div>
+			<div class="card-footer text-muted">
+				<div class="row d-flex justify-content-between">
+					<div class="col">
+						Edit Date: {{editted_post.date_published}}
+					</div>
+				</div>		
+			</div>
+		</div>
+
+        <div class="container d-flex justify-content-center">
+            <a href="{% url 'accept-edit-request' editted_post.id %}"><button class='btn btn-lg btn-success mx-3'>ACCEPT REQUEST</button></a>
+            <a href="{% url 'remove-edit-request' editted_post.id %}"><button class='btn btn-lg btn-danger'>REMOVE REQUEST</button></a>
+        </div>
+
+	</div>
+</div>
+
+{% endblock content %}

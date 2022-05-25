@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Home Page
+{% endblock title %}
+
+
+{% block content %}
+<style type="text/css">
+  @media (max-width: 768px) {
+    .right-column {
+      margin-left: 0px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .right-column {
+      margin-left: 20px;
+    }
+  }
+
+  .blog-post-container {
+    background-color: #f2f2f2;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .create-post-bar {
+    background-color: #f2f2f2;
+    margin-bottom: 20px;
+  }
+
+  .left-column {
+    padding: 0px;
+  }
+
+  .right-column {
+    padding: 0px;
+  }
+
+  .category-div{
+    border: 1px solid black;
+  }
+</style>
+
+
+
+  {% for cat in categories %}
+  
+    <div class="container category-div my-3 mx-auto">
+      <h5 class="display-5">{{cat.name}}</h5>
+      <div class="row">
+        {% for post in posts %}
+          {% if post.category.name == cat.name %}
+                <div class="col blog-post-container"> 
+                  {% include 'snippets/blog_post_snippet.html' with blog_post=post %}
+                </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  
+  {% endfor %}
+
+
+
+
+{% endblock content %}
+
+{% comment %} <div class="container">
+  <div class="row">
+
+
+    <!-- Blog Feed -->
+    <div class="left-column col-lg-7 offset-lg-1 mt-3">
+        {% if posts %}
+        {% for post in posts %}
+        <div class="blog-post-container">
+          {% include 'snippets/blog_post_snippet.html' with blog_post=post %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="blog-post-container">
+          {% include 'snippets/blog_post_snippet.html' with query=query %}
+        </div>
+        {% endif %}
+  
+        <!-- Pagination -->
+        {% include 'snippets/blog_post_pagination.html' with posts=posts %}
+  
+      </div>
+      <!-- End Blog Feed -->
+
+  </div>
+</div>
+ {% endcomment %}
